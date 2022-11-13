@@ -1,0 +1,43 @@
+/*
+ * ap.c
+ *
+ *  Created on: Oct 30, 2022
+ *      Author: user
+ */
+
+
+#include "ap.h"
+
+
+
+
+void apInit(void)
+{
+  gpioPinMode(_DEF_LED1, _DEF_OUTPUT_PULLUP);
+}
+
+
+void apMain(void)
+{
+
+  while(1)
+  {
+    //GPIO Test..
+    /*
+    gpioPinToggle(_DEF_LED1);
+    delay(1000);
+    */
+
+/*
+    gpioPinWrite(_DEF_LED1, _DEF_HIHG);
+    delay_ms(100);
+    gpioPinWrite(_DEF_LED1, _DEF_LOW);
+    delay_ms(100);
+
+*/
+    ssd1306_Fill(White);
+    ssd1306_W_String("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz{|}~",0,0);
+  }
+}
+
+

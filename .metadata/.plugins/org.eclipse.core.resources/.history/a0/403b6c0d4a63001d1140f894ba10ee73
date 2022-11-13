@@ -1,0 +1,10 @@
+stm32g0xx_ll_bus.h:469:22:LL_APB1_GRP1_EnableClock	24	static
+stm32g0xx_ll_bus.h:1141:22:LL_IOP_GRP1_EnableClock	24	static
+stm32g0xx_ll_usart.h:616:22:LL_USART_Enable	16	static
+stm32g0xx_ll_usart.h:667:22:LL_USART_DisableFIFO	16	static
+stm32g0xx_ll_usart.h:700:22:LL_USART_SetTXFIFOThreshold	16	static
+stm32g0xx_ll_usart.h:739:22:LL_USART_SetRXFIFOThreshold	16	static
+stm32g0xx_ll_usart.h:2650:22:LL_USART_ConfigAsyncMode	16	static
+stm32g0xx_ll_usart.h:3165:26:LL_USART_IsActiveFlag_TEACK	16	static
+stm32g0xx_ll_usart.h:3176:26:LL_USART_IsActiveFlag_REACK	16	static
+usart.c:29:6:MX_USART2_UART_Init	72	static

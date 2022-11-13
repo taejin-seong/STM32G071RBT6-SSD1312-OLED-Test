@@ -1,0 +1,162 @@
+/*
+ * ssd1312.c
+ *
+ *  Created on: 2022. 11. 2.
+ *      Author: sungt
+ */
+
+
+#include "ssd1312.h"
+
+// Screenbuffer
+static uint8_t SSD1306_Buffer[SSD1306_BUFFER_SIZE];
+
+// Screen object
+static SSD1306_t SSD1306;
+
+
+
+static void ssd1306_WriteCommand(uint8_t byte)
+{
+  LL_I2C_HandleTransfer(I2C, SSD1312_ADDR, LL_I2C_ADDRSLAVE_7BIT, 1, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
+
+
+  while (!LL_I2C_IsActiveFlag_STOP(I2C))
+  {
+     if (LL_I2C_IsActiveFlag_TXIS(I2C))
+     {
+       LL_I2C_TransmitData8(I2C, byte);
+     }
+   }
+
+  LL_I2C_ClearFlag_STOP(I2C);
+}
+
+
+
+static void ssd1306_WriteData(uint8_t * buffer, size_t buff_size)
+{
+    LL_I2C_HandleTransfer(I2C, SSD1312_ADDR, LL_I2C_ADDRSLAVE_7BIT, buff_size, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
+
+
+    while (!LL_I2C_IsActiveFlag_STOP(I2C))
+    {
+       if (LL_I2C_IsActiveFlag_TXIS(I2C))
+       {
+         for (int i = 0; i < sizeof(buffer); i++)
+         {
+           LL_I2C_TransmitData8(I2C, buffer[i]);
+         }
+       }
+     }
+
+    LL_I2C_ClearFlag_STOP(I2C);
+}
+
+
+void ssd1306_SetContrast(const uint8_t value) {
+    const uint8_t kSetContrastControlRegister = 0x81;
+    ssd1306_WriteCommand(kSetContrastControlRegister);
+    ssd1306_WriteCommand(value);
+}
+
+
+void ssd1306_Init(void)
+{
+    delay(200);
+
+
+    ssd1306_WriteCommand(0xAE);
+
+    ssd1306_WriteCommand(0xD5);
+    ssd1306_WriteCommand(0x80);
+
+    ssd1306_WriteCommand(0xA8);
+    ssd1306_WriteCommand(0x3F);
+
+    ssd1306_WriteCommand(0xD3);
+    ssd1306_WriteCommand(0x00);
+
+    ssd1306_WriteCommand(0x40);
+
+    ssd1306_WriteCommand(0x8D);
+    ssd1306_WriteCommand(0x14);
+
+    ssd1306_WriteCommand(0x20);
+    ssd1306_WriteCommand(0x00);
+
+    ssd1306_WriteCommand(0xA1);
+    ssd1306_WriteCommand(0xC0);
+
+    ssd1306_WriteCommand(0xDA);
+    ssd1306_WriteCommand(0x12);
+
+    ssd1306_WriteCommand(0x81);
+    ssd1306_WriteCommand(0xCF);
+
+
+    ssd1306_WriteCommand(0xD9);
+    ssd1306_WriteCommand(0xF1);
+
+    ssd1306_WriteCommand(0xDB);
+    ssd1306_WriteCommand(0x40);
+
+
+    ssd1306_WriteCommand(0x2E);
+    ssd1306_WriteCommand(0xA4);
+    ssd1306_WriteCommand(0xA6);
+
+
+    ssd1306_SetDisplayOn(1); //--turn on SSD1306 panel
+
+    // Clear screen
+    ssd1306_Fill(Black);
+
+    // Flush buffer to screen
+    ssd1306_UpdateScreen();
+
+    // Set default values for screen object
+    SSD1306.CurrentX = 0;
+    SSD1306.CurrentY = 0;
+
+    SSD1306.Initialized = 1;
+}
+
+// Fill the whole screen with the given color
+void ssd1306_Fill(SSD1306_COLOR color) {
+    /* Set memory */
+    uint32_t i;
+
+    for(i = 0; i < sizeof(SSD1306_Buffer); i++) {
+        SSD1306_Buffer[i] = (color == Black) ? 0x00 : 0xFF;
+    }
+}
+
+
+void ssd1306_SetDisplayOn(const uint8_t on) {
+    uint8_t value;
+    if (on) {
+        value = 0xAF;   // Display on
+        SSD1306.DisplayOn = 1;
+    } else {
+        value = 0xAE;   // Display off
+        SSD1306.DisplayOn = 0;
+    }
+    ssd1306_WriteCommand(value);
+}
+
+
+void ssd1306_UpdateScreen(void) {
+    // Write data to each page of RAM. Number of pages
+    // depends on the screen height:
+    //
+    //  * 32px   ==  4 pages
+    //  * 64px   ==  8 pages
+    //  * 128px  ==  16 pages
+    for(uint8_t i = 0; i < SSD1306_HEIGHT/8; i++) {
+        ssd1306_WriteCommand(0xB0 + i); // Set the current RAM page address.
+        ssd1306_WriteCommand(0x00 + SSD1306_X_OFFSET_LOWER);
+        ssd1306_WriteCommand(0x10 + SSD1306_X_OFFSET_UPPER);
+        ssd1306_WriteData(&SSD1306_Buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
+    }
+}

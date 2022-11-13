@@ -1,0 +1,6 @@
+bsp.c:15:6:bspInit	16	static
+bsp.c:24:6:delay_ms	16	static
+bsp.c:30:6:delay_us	24	static
+bsp.c:44:10:millis	8	static
+bsp.c:57:6:SystemClock_Config	88	static
+bsp.c:107:6:Error_Handler	8	static,ignoring_inline_asm

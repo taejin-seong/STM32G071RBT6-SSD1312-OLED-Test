@@ -1,0 +1,7 @@
+ssd1312.c:17:13:ssd1312_WriteCommand	32	static
+ssd1312.c:32:13:ssd1312_WriteData	32	static
+ssd1312.c:42:6:ssd1312_Init	8	static
+ssd1312.c:89:6:ssd1312_Clear	152	static
+ssd1312.c:109:6:ssd1312_SetCoord	32	static
+ssd1312.c:125:6:ssd1312_WriteChar	56	static
+ssd1312.c:145:6:ssd1312_WriteString	16	static
