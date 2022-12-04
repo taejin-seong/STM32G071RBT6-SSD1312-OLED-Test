@@ -1,8 +1,0 @@
-stm32g0xx_ll_i2c.h:604:22:LL_I2C_EnableClockStretching	16	static
-stm32g0xx_ll_i2c.h:724:22:LL_I2C_DisableGeneralCall	16	static
-stm32g0xx_ll_i2c.h:835:22:LL_I2C_SetOwnAddress2	24	static
-stm32g0xx_ll_i2c.h:857:22:LL_I2C_DisableOwnAddress2	16	static
-stm32g0xx_ll_i2c.h:1838:22:LL_I2C_EnableAutoEndMode	16	static
-stm32g0xx_ll_bus.h:469:22:LL_APB1_GRP1_EnableClock	24	static
-stm32g0xx_ll_bus.h:1141:22:LL_IOP_GRP1_EnableClock	24	static
-i2c.c:28:6:MX_I2C1_Init	72	static

@@ -37,8 +37,20 @@ void apMain(void)
 
 */
 
-    ssd1312_WriteString("Hello,",0,0);
-    ssd1312_WriteString("World!",2,0);
+/* TODO: OLED ap TEST .. */
+
+   //ssd1312_DisplayON();
+
+   ssd1312_WriteString("Hello,",0,0);
+   ssd1312_WriteString("World!",2,0);
+   ssd1312_SetContrast(0x10);
+   delay_ms(100);
+   ssd1312_SetContrast(0xFF);
+   delay_ms(100);
+
+
+  // ssd1312_DisplayOFF();
+  // delay_ms(100);
 
   }
 }

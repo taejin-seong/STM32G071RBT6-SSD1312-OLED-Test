@@ -5,3 +5,6 @@ ssd1312.c:89:6:ssd1312_Clear	152	static
 ssd1312.c:109:6:ssd1312_SetCoord	32	static
 ssd1312.c:125:6:ssd1312_WriteChar	56	static
 ssd1312.c:145:6:ssd1312_WriteString	16	static
+ssd1312.c:169:6:ssd1312_DisplayON	8	static
+ssd1312.c:178:6:ssd1312_DisplayOFF	8	static
+ssd1312.c:187:6:ssd1312_SetContrast	16	static
