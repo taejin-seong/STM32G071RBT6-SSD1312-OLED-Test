@@ -1,0 +1,5 @@
+ssd1312_draw.c:23:6:ssd1312_DrawPixel	24	static
+ssd1312_draw.c:44:6:ssd1312_DrawFillPage	24	static
+ssd1312_draw.c:65:6:ssd1312_DrawBitmap	32	static
+ssd1312_draw.c:103:6:ssd1312_WriteChar	56	static
+ssd1312_draw.c:126:6:ssd1312_WriteString	16	static

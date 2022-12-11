@@ -1,0 +1,9 @@
+ssd1312_command.c:18:6:ssd1312_WriteCommand	32	static
+ssd1312_command.c:32:6:ssd1312_WriteData	32	static
+ssd1312_command.c:43:6:ssd1312_Init	8	static
+ssd1312_command.c:90:6:ssd1312_Clear	152	static
+ssd1312_command.c:109:6:ssd1312_DisplayON	8	static
+ssd1312_command.c:119:6:ssd1312_DisplayOFF	8	static
+ssd1312_command.c:129:6:ssd1312_SetContrast	16	static
+ssd1312_command.c:140:6:ssd1312_SetAddr	32	static
+ssd1312_command.c:157:6:ssd1312_FlushBufferToScreen	16	static

@@ -1,0 +1,207 @@
+/*
+ * ssd1312.h
+ *
+ *  Created on: 2022. 11. 2.
+ *      Author: sungt
+ */
+
+#ifndef SRC_COMMON_INCLUDE_SSD1312_H_
+#define SRC_COMMON_INCLUDE_SSD1312_H_
+
+#include "ssd1312_font.h"
+#include "hw_def.h"
+#include "i2c.h"
+
+
+#ifdef _USE_HW_SSD1312
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                     *
+ *                      SSD1312 Information Table                      *
+ *                                                                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+#define SSD1312_I2C_PORT        hi2c1
+#define SSD1312_I2C_ADDR        (0x3C << 1)
+
+#define FONT_WIDTH              12
+
+#define SSD1312_HEIGHT          64
+#define SSD1312_WIDTH           128
+
+#define SSD1312_BUFFER_SIZE     SSD1312_WIDTH * SSD1312_HEIGHT / 8
+
+#ifdef SSD1306_X_OFFSET
+#define SSD1312_X_OFFSET_LOWER (SSD1312_X_OFFSET & 0x0F)
+#define SSD1312_X_OFFSET_UPPER ((SSD1312_X_OFFSET >> 4) & 0x07)
+#else
+#define SSD1312_X_OFFSET_LOWER 0
+#define SSD1312_X_OFFSET_UPPER 0
+#endif
+
+
+typedef struct {
+    uint16_t CurrentX;
+    uint16_t CurrentY;
+} ssd1312_coord_tbl;
+
+typedef struct {
+    uint8_t x;
+    uint8_t y;
+} ssd1312_vertex_tbl;
+
+
+uint8_t SSD1312_Buffer[SSD1312_BUFFER_SIZE];
+
+
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                     *
+ *                      SSD1312 Command Table                          *
+ *                                                                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+/* Set Lower Column Start Address for Page Addressing Mode */
+#define CONTROL_LOWER_COLUMN_START_ADDRESS(ADDR)   ((0x00)|ADDR) /* ADDR = 0x00~0x0F (0~15)*/
+
+/* Set Lower Column Start Address for Page Addressing Mode */
+#define CONTROL_HIGHER_COLUMN_START_ADDRESS(ADDR)  ((0x10)|ADDR) /* ADDR = 0x00~0x07 (0~7) */
+
+/* Set Memory Addressing Mode */
+#define CONTROL_MEMORY_ADDRESSING_MODE              (0x20)
+#define     DATA_COM_PAGE_H_MODE                             (0x01)
+#define     DATA_PAGE_ADDRESSING_MODE                        (0x02)
+#define     DATA_SEG_PAGE_H_MODE                             (0x09)
+
+/* Set Line Address */
+/*
+ * This Command is only for COM-Page H-mode and SEG-Page H-mode.
+ *
+ * In COM-Page H-mode : ROW Start address range 0~127.   ADDR = 0x00~0x7F (0~127)
+ *                    : ROW End address range 0~127.     ADDR = 0x00~0x7F (0~127)
+ *
+ * In SEG-Page H-mode : Column Start address range 0~63. ADDR = 0x00~0x3F (0~63)
+ *                    : Column End address range 0~63.   ADDR = 0x00~0x3F (0~63)
+ */
+#define CONTROL_LINE_ADDRESS                        (0x21) //Setup line start and end address
+#define    DATA_LINE_START_ADDRESS(ADDR)                     ((0x00)|ADDR)
+#define    DATA_LINE_END_ADDRESS(ADDR)                       ((0x00)|ADDR)
+
+/* Set Page Address */
+/*
+ * This Command is only for COM-Page H-mode and SEG-Page H-mode.
+ *
+ * In COM-Page H-mode : COM-Page Start address range 0~7.   ADDR = 0x00~0x07 (0~7)
+ *                    : COM-Page End address range 0~7.     ADDR = 0x00~0x07 (0~7)
+ *
+ * In SEG-Page H-mode : SEG-Page Start address range 0~15.  ADDR = 0x00~0x0F (0~15)
+ *                    : SEG-Page End address range 0~15.    ADDR = 0x00~0x0F (0~15)
+ */
+#define CONTROL_PAGE_ADDRESS                         (0x22) /* Setup Page start and end address */
+#define    DATA_PAGE_START_ADDRESS(ADDR)                     ((0x00)|ADDR)
+#define    DATA_PAGE_END_ADDRESS(ADDR)                       ((0x00)|ADDR)
+
+/* Set Display Start Line */
+#define CONTROL_DISPLAY_START_LINE(LINE)             ((0x40)|LINE) /* LINE = 0x00 ~ 0x3F (0~63) */
+
+/* Set Contrast Control */
+#define CONTROL_CONTRAST_CONTROL                     (0x81)
+#define    DATA_CONTRAST_VALUE(VAL)                          ((0x00)|VAL) /* VAL = 0x00 ~ 0xFF (0~255)*/
+
+/* Set Segment Re-map */
+#define CONTROL_SEGMENT_RE_MAP_0                     (0xA0)
+#define CONTROL_SEGMENT_RE_MAP_128                   (0xA1)
+
+/* Entire Display ON */
+#define CONTROL_ENTIRE_DISPLAY_RESET                 (0xA4) /* Output follows RAM content */
+#define CONTROL_ENTIRE_DISPLAY_ON                    (0xA5) /* Output ignores RAM content */
+
+/* Set Normal/Inverse Display */
+#define CONTROL_NORMAL_DISPLAY                       (0xA6) /* 0 in RAM : OFF Display panel / 1 in RAM : ON Display panel */
+#define CONTROL_INVERSE_DISPLAY                      (0xA7) /* 1 in RAM : OFF Display panel / 0 in RAM : ON Display panel */
+
+/* Set MUX ratio to N+1 MUX */
+#define CONTROL_MUX_RATIO                            (0xA8)
+#define    DATA_MUX_VALUE(VAL)                              ((0x00)|VAL) /* VAL = 0x0F ~ 0x3F (15~63) *0x00~0x0E :invalid entry */
+
+/* Set External or internal Iref Selection */
+#define CONTROL_IREF_SELECTION                       (0xAD)
+#define    DATA_IREF_EXTERNAL                               (0x40)
+#define    DATA_IREF_INTERNAL                               (0x50)
+
+/* Set Display ON/OFF */
+#define CONTROL_DISPLAY_OFF                          (0xAE) /* Sleep mode */
+#define CONTROL_DISPLAY_ON                           (0xAF) /* Normal mode */
+
+/* Set Page Start Address for Page Addressing Mode*/
+#define CONTROL_PAGE_START_ADDRESS(ADDR)             ((0xB0)|ADDR) /* ADDR = 0x00~0x07*/
+
+/* Set COM Output Scan Direction */
+#define CONTROL_COM_SCAN_DIRECTION_NORMAL            (0xC0) /* Normal mode. Scan from COM0 to COM[N-1] */
+#define CONTROL_COM_SCAN_DIRECTION_REMAPPED          (0xC8) /* Remapped mode. Scan from COM[N-1] to COM0 */
+
+/* Set Display Offset */
+#define CONTROL_DISPLAY_OFFSET                       (0xD3)              /* Set line shift by COM from 0d~63d */
+#define    DATA_DISPLAY_OFFSET_VAL(VAL)                     ((0x00)|VAL) /* VAL = 0x00 ~ 0x3F (0~63) */
+
+/* Set Display Clock Divide Ratio/Oscillator Frequency */
+#define CONTROL_DCLK_FOSC                            (0xD5)
+#define    DATA_DCLK_FOSC_VAL(DCLK_VAL, FOSC_VAL)            ((((0x00)|FOSC_VAL)<<4)|DCLK_VAL) /* FOSC_VAL : 0x00~0x0F (0~15), DCLK_VAL : 0x00~0x0F (0~15) */
+
+/* Set Pre-charge Period */
+#define CONTROL_PRE_CHARGE_PERIOD                     (0xD9)
+#define    DATA_PHASE1_2_DCLK_VAL(PHASE1_VAL, PHASE2_VAL)    ((((0x00)|PHASE2_VAL)<<4)|PHASE1_VAL) /* PHASE2_VAL : 0x00~0x0F (0~15), PHASE1_VAL : 0x00~0x0F (0~15) */
+
+/* Set SEG Pins Hardware Configuration */
+#define CONTROL_SEG_PIN_HW_CONFIGURATION              (0xDA)
+#define    DATA_SEG_PIN_SEQUENTIAL_DISABLE_LR_REMAP          (0x00) /* Sequential SEG pin configuration & Disable SEG Left/Right remap */
+#define    DATA_SEG_PIN_ALTERNATIVE_DISABLE_LR_REMAP         (0x12) /* Alternative (odd/even) SEG pin configuration & Disable SEG Left/Right remap */
+#define    DATA_SEG_PIN_SEQUENTIAL_ENABLE_LR_REMAP           (0x22) /* Sequential SEG pin configuration & Enable SEG Left/Right remap */
+#define    DATA_SEG_PIN_ALTERNATIVE_ENABLE_LR_REMAP          (0x32) /* Alternative (odd/even) SEG pin configuration & Enable SEG Left/Right remap */
+
+/* Set Vcomh select Level */
+#define CONTROL_VCOMH_LEVEL                           (0xDB)
+#define   DATA_VOCMH_LEVEL_065xVCC                           (0x00) /* ~0.65 x Vcc */
+#define   DATA_VOCMH_LEVEL_071xVCC                           (0x10) /* ~0.71 x Vcc */
+#define   DATA_VOCMH_LEVEL_077xVCC                           (0x20) /* ~0.77 x Vcc */
+#define   DATA_VOCMH_LEVEL_083xVCC                           (0x30) /* ~0.83 x Vcc */
+
+/* NOP */
+#define CONTROL_NOP                                   (0xE3)
+
+/* Charge Pump Setting */
+#define CONTROL_CHARGE_PUMP_SETTING                   (0x8D)
+#define   DATA_CHARGE_PUMP_DISABLE                           (0x00) /* Disable charge pump */
+#define   DATA_CHARGE_PUMP_ENABLE_75                         (0x14) /* Enable charge pump, 7.5V */
+#define   DATA_CHARGE_PUMP_ENABLE_8                          (0x54) /* Enable charge pump, 8.0V */
+#define   DATA_CHARGE_PUMP_ENABLE_9                          (0x74) /* Enable charge pump, 9.0V */
+#define   DATA_CHARGE_PUMP_ENABLE_10                         (0x94) /* Enable charge pump, 10.0V */
+
+/* Set Command Lock */
+#define CONTROL_COMMAND_LOCK                          (0xFD)        /* MCU protection status */
+#define   DATA_UNLOCK_COMMAND                                (0x12) /* Unlock OLED driver IC MCU interface from entering command */
+#define   DATA_LOCK_COMMAND                                  (0x22) /* Lock OLED driver IC MCU interface from entering command */
+
+
+
+
+void ssd1312_WriteCommand(uint8_t cmd);
+void ssd1312_WriteData(uint8_t * buffer, size_t buff_size);
+void ssd1312_Init(void);
+void ssd1312_Clear(void);
+void ssd1312_UpdateScreen(void);
+void ssd1312_DisplayON(void);
+void ssd1312_DisplayOFF(void);
+void ssd1306_SetCursor(uint8_t x, uint8_t y);
+void ssd1312_SetCoord(uint8_t page, uint8_t col);
+void ssd1312_SetContrast(uint8_t val);
+
+
+#endif /* _USE_HW_SSD1312 */
+
+#endif /* SRC_COMMON_INCLUDE_SSD1312_H_ */

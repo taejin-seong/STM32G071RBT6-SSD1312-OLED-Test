@@ -1,0 +1,32 @@
+/*
+ * font.h
+ *
+ *  Created on: 2022. 11. 6.
+ *      Author: user
+ */
+
+#ifndef SRC_COMMON_INCLUDE_SSD1312_FONT_H_
+#define SRC_COMMON_INCLUDE_SSD1312_FONT_H_
+
+#include "hw_def.h"
+
+
+#ifdef _USE_HW_FONT
+
+
+
+
+#define SSD1312_INCLUDE_FONT_12x16
+
+
+#ifdef  SSD1312_INCLUDE_FONT_12x16
+#define FONT_WIDTH    12
+#define FONT_HEIGHT   16
+#endif
+
+
+
+
+
+#endif /* _USE_HW_FONT */
+#endif /* SRC_COMMON_INCLUDE_SSD1312_FONT_H_ */

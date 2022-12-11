@@ -1,0 +1,28 @@
+/*
+ * draw.h
+ *
+ *  Created on: 2022. 12. 10.
+ *      Author: user
+ */
+
+#ifndef SRC_COMMON_INCLUDE_DRAW_H_
+#define SRC_COMMON_INCLUDE_DRAW_H_
+
+#include "hw_def.h"
+#include "ssd1312_command.h"
+
+
+
+#ifdef _USE_HW_DRAW
+
+
+
+void ssd1312_DrawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8_t w, uint8_t h);
+void ssd1312_DrawPixel(uint8_t x, uint8_t y);
+
+char ssd1312_WriteChar(char chr, FontDef Font);
+char ssd1312_WriteString(char* str, FontDef Font);
+
+
+#endif /*_USE_HW_DRAW */
+#endif /* SRC_COMMON_INCLUDE_DRAW_H_ */

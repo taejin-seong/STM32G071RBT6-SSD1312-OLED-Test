@@ -15,8 +15,11 @@
 //TODO: 모듈헤더설정 (1)
 #include "gpio.h"
 #include "i2c.h"
-#include "font.h"
-#include "ssd1312.h"
+#include "ssd1312_font.h"
+#include "ssd1312_img.h"
+#include "ssd1312_command.h"
+#include "ssd1312_draw.h"
+
 
 
 

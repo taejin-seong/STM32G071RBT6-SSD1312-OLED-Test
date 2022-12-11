@@ -1,0 +1,191 @@
+/*
+ * ssd1312.c
+ *
+ *  Created on: 2022. 11. 2.
+ *      Author: sungt
+ */
+
+
+#include "ssd1312_command.h"
+
+
+
+
+
+/*
+ *
+ */
+void ssd1312_WriteCommand(uint8_t cmd)
+{
+  uint8_t buffer[2]={0};        //Control Byte + Command Byte
+    buffer[0]=(0<<7)|(0<<6);    //Co=0 , D/C=0
+    buffer[1]=cmd;
+
+    HAL_I2C_Master_Transmit(&SSD1312_I2C_PORT, SSD1312_I2C_ADDR, (uint8_t*)buffer, 2, HAL_MAX_DELAY);
+}
+
+
+
+/*
+ *
+ */
+void ssd1312_WriteData(uint8_t * buffer, size_t buff_size)
+{
+  HAL_I2C_Mem_Write(&SSD1312_I2C_PORT, SSD1312_I2C_ADDR, CONTROL_DISPLAY_START_LINE(0x00), 1, buffer, buff_size, HAL_MAX_DELAY);
+}
+
+
+
+/*
+ *
+ */
+
+void ssd1312_Init(void)
+{
+    delay_ms(200);
+
+    ssd1312_WriteCommand(CONTROL_DISPLAY_OFF);                       //Display OFF
+
+    ssd1312_WriteCommand(CONTROL_MUX_RATIO);                         //Set Mux Ratio
+    ssd1312_WriteCommand(DATA_MUX_VALUE(63));                        //64MUX
+
+    ssd1312_WriteCommand(CONTROL_DISPLAY_OFFSET);                    //Set Display Offset
+    ssd1312_WriteCommand(DATA_DISPLAY_OFFSET_VAL(0));                //COM0
+
+    ssd1312_WriteCommand(CONTROL_DISPLAY_START_LINE(0));             //Set Display Start Line
+
+    ssd1312_WriteCommand(CONTROL_SEGMENT_RE_MAP_0);                  //Set Segment re-map, Default 0xA0
+//    ssd1312_WriteCommand(CONTROL_SEGMENT_RE_MAP_128);              //column address 127 is mapped to SEG0 (좌우 반전)
+
+//    ssd1312_WriteCommand(CONTROL_COM_SCAN_DIRECTION_NORMAL);       //Set COM Output Scan Direction, default 0xC0
+    ssd1312_WriteCommand(CONTROL_COM_SCAN_DIRECTION_REMAPPED);       //remapped mode. Scan from COM[N-1] to COM0 (상하 반전)
+
+    ssd1312_WriteCommand(CONTROL_SEG_PIN_HW_CONFIGURATION);          //Set COM Pins hardware configuration
+    ssd1312_WriteCommand(DATA_SEG_PIN_ALTERNATIVE_DISABLE_LR_REMAP);
+
+    ssd1312_WriteCommand(CONTROL_MEMORY_ADDRESSING_MODE);            //Set Memory Addressing Mode
+    ssd1312_WriteCommand(DATA_PAGE_ADDRESSING_MODE);                 //Page Addressing Mode
+
+    ssd1312_WriteCommand(CONTROL_CONTRAST_CONTROL);                  //Set Contrast Control
+    ssd1312_WriteCommand(DATA_CONTRAST_VALUE(127));                  //1~256
+
+    ssd1312_WriteCommand(CONTROL_ENTIRE_DISPLAY_RESET);              //Disable Entire Display On
+
+    ssd1312_WriteCommand(CONTROL_NORMAL_DISPLAY);                    //Set Normal Display
+
+    ssd1312_WriteCommand(CONTROL_DCLK_FOSC);                         //Set Osc Frequency
+    ssd1312_WriteCommand(DATA_DCLK_FOSC_VAL(0, 8));                  //DCLK = 0 , FOSCK = 8
+
+    ssd1312_WriteCommand(CONTROL_CHARGE_PUMP_SETTING);               //Enable charge pump regulator
+    ssd1312_WriteCommand(DATA_CHARGE_PUMP_ENABLE_75);                //Charge pump 7.5V
+
+    ssd1312_WriteCommand(CONTROL_DISPLAY_ON);                        //Display ON
+}
+
+
+
+/*
+ *
+ */
+void ssd1312_Clear(void)
+{
+    uint8_t buffer[128]={0};
+
+    ssd1312_WriteCommand(CONTROL_LOWER_COLUMN_START_ADDRESS(0));
+    ssd1312_WriteCommand(CONTROL_HIGHER_COLUMN_START_ADDRESS(0));
+
+    for(uint8_t i=0; i < SSD1312_HEIGHT/8; i++)
+    {
+      ssd1312_WriteCommand(CONTROL_PAGE_START_ADDRESS(0)+i);
+      ssd1312_WriteData(buffer,128);
+    }
+}
+
+
+
+/*
+ *
+ */
+void ssd1312_DisplayON(void)
+{
+  ssd1312_WriteCommand(CONTROL_DISPLAY_ON);
+}
+
+
+/*
+ *
+ */
+void ssd1312_DisplayOFF(void)
+{
+  ssd1312_WriteCommand(CONTROL_DISPLAY_OFF);
+}
+
+
+
+/*
+ *
+ */
+void ssd1312_SetContrast(uint8_t val)
+{
+  ssd1312_WriteCommand(CONTROL_CONTRAST_CONTROL);
+  ssd1312_WriteCommand(DATA_CONTRAST_VALUE(val));
+}
+
+
+
+/*
+ *
+ */
+void ssd1312_SetPageAddr(uint8_t page, uint8_t col)
+{
+
+  uint8_t col_low  = SSD1312_COLUMN_OFFSET_LOWER(col); // lower offset setting
+  uint8_t col_high = SSD1312_COLUMN_OFFSET_HIGHER(col); // higher offset setting
+
+  /* Processing of screen updates */
+  ssd1312_WriteCommand(CONTROL_PAGE_START_ADDRESS(0) + page); // Set the current RAM page address.
+  ssd1312_WriteCommand(CONTROL_LOWER_COLUMN_START_ADDRESS(col_low));
+  ssd1312_WriteCommand(CONTROL_HIGHER_COLUMN_START_ADDRESS(col_high));
+
+  if (col == 0 )
+  {
+    ssd1312_WriteCommand(CONTROL_LOWER_COLUMN_START_ADDRESS(0));
+    ssd1312_WriteCommand(CONTROL_HIGHER_COLUMN_START_ADDRESS(0));
+
+  }
+}
+
+
+
+/*
+ *
+ *
+ */
+void ssd1312_SetPageData(uint8_t page, uint8_t col, uint8_t * buffer, size_t buff_size)
+{
+
+    for(uint8_t i = 0; i < SSD1312_HEIGHT/8; i++)
+    {
+      ssd1312_SetPageAddr(page + i, col);
+      ssd1312_WriteData(&buffer[buff_size*i],buff_size);
+    }
+}
+
+
+
+void ssd1312_UpdateScreen(void) {
+    // Write data to each page of RAM. Number of pages
+    // depends on the screen height:
+    //
+    //  * 32px   ==  4 pages
+    //  * 64px   ==  8 pages
+    //  * 128px  ==  16 pages
+    for(uint8_t i = 0; i < SSD1312_HEIGHT/8; i++) {
+        ssd1312_WriteCommand(0xB0 + i); // Set the current RAM page address.
+        ssd1312_WriteCommand(0x00 + 0);
+        ssd1312_WriteCommand(0x10 + 0);
+        ssd1312_WriteData(&SSD1312_Buffer[SSD1312_WIDTH*i],SSD1312_WIDTH);
+    }
+}
+
+

@@ -38,10 +38,12 @@ src/bsp/stm32g0xx_it.o: ../src/bsp/stm32g0xx_it.c \
  C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/gpio.h \
  C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/hw/hw_def.h \
  C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/i2c.h \
- C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/font.h \
- C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/ssd1312.h \
+ C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/configuration/ssd1312_font.h \
+ C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/configuration/ssd1312_img.h \
+ C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/ssd1312_command.h \
  C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/i2c.h \
- C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/font.h \
+ C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/ssd1312_draw.h \
+ C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/ssd1312_command.h \
  ../src/bsp/stm32g0xx_it.h
 
 C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/main.h:
@@ -122,12 +124,16 @@ C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/hw/hw_def.h:
 
 C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/i2c.h:
 
-C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/font.h:
+C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/configuration/ssd1312_font.h:
 
-C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/ssd1312.h:
+C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/configuration/ssd1312_img.h:
+
+C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/ssd1312_command.h:
 
 C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/i2c.h:
 
-C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/font.h:
+C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/ssd1312_draw.h:
+
+C:/Users/user/Desktop/STM32G071RBT6_OLED/stm32g071rbt6_oled/src/common/include/ssd1312_command.h:
 
 ../src/bsp/stm32g0xx_it.h:

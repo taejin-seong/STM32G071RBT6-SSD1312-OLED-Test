@@ -1,0 +1,38 @@
+/*
+ * font.h
+ *
+ *  Created on: 2022. 11. 6.
+ *      Author: user
+ */
+
+#ifndef SRC_COMMON_INCLUDE_SSD1312_FONT_H_
+#define SRC_COMMON_INCLUDE_SSD1312_FONT_H_
+
+#include "hw_def.h"
+
+
+#ifdef _USE_HW_FONT
+
+#define SSD1312_INCLUDE_FONT_11x18
+
+typedef struct {
+    const uint8_t FontWidth;    /*!< Font width in pixels */
+    uint8_t FontHeight;         /*!< Font height in pixels */
+    const uint16_t *data;       /*!< Pointer to data font data array */
+} FontDef;
+
+#ifdef SSD1312_INCLUDE_FONT_6x8
+extern FontDef Font_6x8;
+#endif
+#ifdef SSD1312_INCLUDE_FONT_7x10
+extern FontDef Font_7x10;
+#endif
+#ifdef SSD1312_INCLUDE_FONT_11x18
+extern FontDef Font_11x18;
+#endif
+#ifdef SSD1312_INCLUDE_FONT_16x26
+extern FontDef Font_16x26;
+#endif
+
+#endif /* _USE_HW_FONT */
+#endif /* SRC_COMMON_INCLUDE_SSD1312_FONT_H_ */

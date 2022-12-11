@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;stm32g071rbt6_oled/src/common/bitmap&apos; to &apos;configuration&apos;" description="Rename resource &apos;bitmap&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/common/bitmap" name="configuration" stamp="1670726037264" updateReferences="true"/>
+</session>

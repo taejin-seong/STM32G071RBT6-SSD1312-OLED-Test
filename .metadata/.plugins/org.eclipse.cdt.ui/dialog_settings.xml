@@ -10,7 +10,9 @@
 	<item key="org.eclipse.cdt.uiformatter_pagemodify_dialog.preferred_height" value="865"/>
 	<item key="org.eclipse.cdt.uiformatter_pagemodify_dialog.preferred_x" value="406"/>
 	<item key="org.eclipse.cdt.uiformatter_pagemodify_dialog.preferred_y" value="0"/>
-	<item key="org.eclipse.cdt.utils.ui.controls.FileListControl" value="${workspace_loc:/${ProjName}/src/hw/dirver}"/>
+	<item key="org.eclipse.cdt.utils.ui.controls.FileListControl" value="${workspace_loc:/${ProjName}/src/common/configuration}"/>
+	<item key="LastUsedSourceTemplate" value="Default C source template"/>
+	<item key="LastUsedHeaderTemplate" value="Default C header template"/>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
 	</section>
 	<section name="completion_proposal_size">
@@ -19,5 +21,6 @@
 		<item key="askReindex.detail" value="0"/>
 	</section>
 	<section name="CResourceRenameRefactoringInputPage">
+		<item key="updateReferences" value="true"/>
 	</section>
 </section>
